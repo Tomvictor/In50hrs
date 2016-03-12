@@ -13,16 +13,8 @@ void setup() {
   pinMode(ledPin,OUTPUT);            //Set the LED on Digital 8 as an OUTPUT
 }
 void loop() {
-  int sensorValue = analogRead(0); 
+  int sensorValue = analogRead(A0); 
   Rsensor=(float)(1023-sensorValue)*10/sensorValue;
-  if(Rsensor>thresholdvalue)
-  {
-    digitalWrite(ledPin,HIGH);
-  }
-  else
-  {
-  digitalWrite(ledPin,LOW);
-  }
   Serial.println("the analog read data is ");
   Serial.println(sensorValue);
   Serial.println("the sensor resistance is ");
