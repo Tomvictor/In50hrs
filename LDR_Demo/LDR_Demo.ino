@@ -19,5 +19,5 @@ void loop() {
   Serial.println(sensorValue);
   Serial.println("the sensor resistance is ");
   Serial.println(Rsensor,DEC);//show the light intensity on the serial monitor;
-  delay(1000);
+  //delay(1000);
 }
