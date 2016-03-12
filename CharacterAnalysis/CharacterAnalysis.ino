@@ -27,7 +27,9 @@ void loop() {
   // get any incoming bytes:
   if (Serial.available() > 0) {
     int thisChar = Serial.read();
-    Serial.write(thisChar);
+    Serial.write(thisChar+1);
+    Serial.println("");
+    //Serial.println("is that you what typed");
     // say what was sent:
     /*
     Serial.print("You sent me: \'");
@@ -46,8 +48,8 @@ void loop() {
   
 
     // add some space and ask for another byte:
-    Serial.println();
-    Serial.println("Give me another byte:");
-    Serial.println();
+   // Serial.println();
+    //Serial.println("Give me another byte:");
+   // Serial.println();
   }
 }
