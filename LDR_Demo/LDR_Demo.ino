@@ -15,9 +15,9 @@ void setup() {
 void loop() {
   int sensorValue = analogRead(A0); 
   Rsensor=(float)(1023-sensorValue)*10/sensorValue;
-  Serial.println("the analog read data is ");
+ // Serial.println("the analog read data is ");
   Serial.println(sensorValue);
-  Serial.println("the sensor resistance is ");
-  Serial.println(Rsensor,DEC);//show the light intensity on the serial monitor;
+ // Serial.println("the sensor resistance is ");
+//  Serial.println(Rsensor,DEC);//show the light intensity on the serial monitor;
   //delay(1000);
 }
