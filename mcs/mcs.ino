@@ -9,9 +9,15 @@
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
 #define per 50
 #define per1 3
-#define DEVICEID "DpPHAJ0j" // Input your deviceId
-#define DEVICEKEY "NVCVptttA2x5h4JO" // Input your deviceKey
+#define DEVICEID "Dk59w00H" // Input your deviceId
+#define DEVICEKEY "cgHLQir2VpYGcvEs" // Input your deviceKey
 #define SITE_URL "api.mediatek.com"
+
+#include "DHT.h"
+#define DHTPIN 2     // what pin we're connected to
+#define DHTTYPE DHT22   // DHT 22  (AM2302)
+DHT dht(DHTPIN, DHTTYPE);//DHT
+
 
 LWiFiClient c;
 unsigned int rtc;
@@ -38,7 +44,10 @@ void setup()
   LWiFi.begin();
   Serial.begin(115200);
   while(!Serial) delay(1000); /* comment out this line when Serial is not present, ie. run this demo without connect to PC */
-
+  //DHT
+  Serial.println("DHTxx Started!");
+    dht.begin();
+    
   Serial.println("Connecting to AP");
   while (0 == LWiFi.connect(WIFI_AP, LWiFiLoginInfo(WIFI_AUTH, WIFI_PASSWORD)))
   {
@@ -141,18 +150,53 @@ void uploadstatus(){
   //calling RESTful API to upload datapoint to MCS to report LED status
   Serial.println("calling connection");
   LWiFiClient c2;  
-
   while (!c2.connect(SITE_URL, 80))
   {
     Serial.println("Re-Connecting to WebSite");
     delay(1000);
   }
   delay(100);
+
+  /*
   if(digitalRead(13)==1)
   upload_led = "LED_Display,,1";
   else
   upload_led = "LED_Display,,0";
   int thislength = upload_led.length();
+
+  */
+//DHT
+    // Reading temperature or humidity takes about 250 milliseconds!
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+
+    //website
+    float t = 0.0;
+    float h = 0.0;
+    
+    if(dht.readHT(&t, &h))
+    {
+        Serial.println("------------------------------");
+        Serial.print("temperature = ");
+        Serial.println(t);
+        
+        Serial.print("humidity = ");
+        Serial.println(h);
+    }
+    
+    delay(2000);
+   //DHT end
+//t=int(t);
+  upload_led = "";
+  upload_led = "temp_id,,"+String(t);
+  upload_led += "\nHumid_id,,"+String(h);
+  
+  
+  
+  int thislength = upload_led.length();
+
+  
+
+  
   HttpClient http(c2);
   c2.print("POST /mcs/v2/devices/");
   c2.print(DEVICEID);
@@ -237,6 +281,9 @@ void loop()
   String tcpcmd="";
   while (c.available())
    {
+
+
+    
       int v = c.read();
       if (v != -1)
       {
