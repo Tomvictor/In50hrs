@@ -31,7 +31,7 @@ DHT dht(DHTPIN, DHTTYPE);//DHT
 #define WIFI_PASSWORD "guest@123"
 //use WPA for normal use
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
-#define SITE_URL "www.project.buildfromzero.com"
+#define SITE_URL "http://www.project.buildfromzero.com"
 
 LWiFiClient c;
 
