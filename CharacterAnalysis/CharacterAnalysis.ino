@@ -29,7 +29,7 @@ void loop() {
     int thisChar = Serial.read();
     Serial.write(thisChar+1);
     Serial.println("");
-    //Serial.println("is that you what typed");
+    Serial.println("is that you what typed");
     // say what was sent:
     /*
     Serial.print("You sent me: \'");

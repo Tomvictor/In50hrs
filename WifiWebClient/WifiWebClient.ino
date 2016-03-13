@@ -20,7 +20,7 @@
 
 #define WIFI_AP "Indix-Event"
 #define WIFI_PASSWORD "guest@123"
-#define WIFI_AUTH LWIFI_WEP  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
+#define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
 #define SITE_URL "www.buildfromzero.com"
 
 LWiFiClient c;

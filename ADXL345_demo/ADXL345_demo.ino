@@ -110,7 +110,7 @@ void loop(){
     Serial.println(" g");
 	Serial.println("**********************");
 	delay(500);
-/*
+
 
   //Fun Stuff!    
   //read interrupts source and look for triggerd actions
@@ -147,6 +147,6 @@ void loop(){
   if(adxl.triggered(interrupts, ADXL345_SINGLE_TAP)){
     Serial.println("tap");
      //add code here to do when a tap is sensed
-  } */
+  } 
  
 }
