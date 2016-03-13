@@ -4,13 +4,13 @@
 #include <LWiFi.h>
 #include <LWiFiClient.h>
 #include <LDateTime.h>
-#define WIFI_AP "IT Portable Hotspot"
-#define WIFI_PASSWORD "12345678"
+#define WIFI_AP "Indix-Event"
+#define WIFI_PASSWORD "guest@123"
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
 #define per 50
 #define per1 3
-#define DEVICEID "********" // Input your deviceId
-#define DEVICEKEY "***************" // Input your deviceKey
+#define DEVICEID "DpPHAJ0j" // Input your deviceId
+#define DEVICEKEY "NVCVptttA2x5h4JO" // Input your deviceKey
 #define SITE_URL "api.mediatek.com"
 
 LWiFiClient c;
