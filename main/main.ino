@@ -31,7 +31,7 @@ DHT dht(DHTPIN, DHTTYPE);//DHT
 #define WIFI_PASSWORD "guest@123"
 //use WPA for normal use
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
-#define SITE_URL "www.buildfromzero.com"
+#define SITE_URL "www.project.buildfromzero.com"
 
 LWiFiClient c;
 
@@ -92,7 +92,8 @@ int sensorValue = analogRead(A0);
 //DHT
     // Reading temperature or humidity takes about 250 milliseconds!
     // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-    
+
+    //website
     float t = 0.0;
     float h = 0.0;
     
@@ -133,6 +134,9 @@ int sensorValue = analogRead(A0);
     Serial.println("disconnected by server");
     disconnectedMsg = true;
   }
+
+
+  
   delay(500);
 }
 
