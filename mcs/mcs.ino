@@ -17,6 +17,11 @@
 #define DHTPIN 2     // what pin we're connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 DHT dht(DHTPIN, DHTTYPE);//DHT
+//adxl
+#include <Wire.h>
+#include <ADXL345.h>
+ADXL345 adxl; //variable adxl is an instance of the ADXL345 library
+
 
 //GPS
 #include <LGPS.h>
@@ -152,6 +157,62 @@ void setup()
   //DHT
   Serial.println("DHTxx Started!");
     dht.begin();
+  //adxl
+  adxl.powerOn();
+
+  //set activity/ inactivity thresholds (0-255)
+  adxl.setActivityThreshold(75); //62.5mg per increment
+  adxl.setInactivityThreshold(75); //62.5mg per increment
+  adxl.setTimeInactivity(10); // how many seconds of no activity is inactive?
+ 
+  //look of activity movement on this axes - 1 == on; 0 == off 
+  adxl.setActivityX(1);
+  adxl.setActivityY(1);
+  adxl.setActivityZ(1);
+ 
+  //look of inactivity movement on this axes - 1 == on; 0 == off
+  adxl.setInactivityX(1);
+  adxl.setInactivityY(1);
+  adxl.setInactivityZ(1);
+ 
+  //look of tap movement on this axes - 1 == on; 0 == off
+  adxl.setTapDetectionOnX(0);
+  adxl.setTapDetectionOnY(0);
+  adxl.setTapDetectionOnZ(1);
+ 
+  //set values for what is a tap, and what is a double tap (0-255)
+  adxl.setTapThreshold(50); //62.5mg per increment
+  adxl.setTapDuration(15); //625us per increment
+  adxl.setDoubleTapLatency(80); //1.25ms per increment
+  adxl.setDoubleTapWindow(200); //1.25ms per increment
+ 
+  //set values for what is considered freefall (0-255)
+  adxl.setFreeFallThreshold(7); //(5 - 9) recommended - 62.5mg per increment
+  adxl.setFreeFallDuration(45); //(20 - 70) recommended - 5ms per increment
+ 
+  //setting all interrupts to take place on int pin 1
+  //I had issues with int pin 2, was unable to reset it
+  adxl.setInterruptMapping( ADXL345_INT_SINGLE_TAP_BIT,   ADXL345_INT1_PIN );
+  adxl.setInterruptMapping( ADXL345_INT_DOUBLE_TAP_BIT,   ADXL345_INT1_PIN );
+  adxl.setInterruptMapping( ADXL345_INT_FREE_FALL_BIT,    ADXL345_INT1_PIN );
+  adxl.setInterruptMapping( ADXL345_INT_ACTIVITY_BIT,     ADXL345_INT1_PIN );
+  adxl.setInterruptMapping( ADXL345_INT_INACTIVITY_BIT,   ADXL345_INT1_PIN );
+ 
+  //register interrupt actions - 1 == on; 0 == off  
+  adxl.setInterrupt( ADXL345_INT_SINGLE_TAP_BIT, 1);
+  adxl.setInterrupt( ADXL345_INT_DOUBLE_TAP_BIT, 1);
+  adxl.setInterrupt( ADXL345_INT_FREE_FALL_BIT,  1);
+  adxl.setInterrupt( ADXL345_INT_ACTIVITY_BIT,   1);
+  adxl.setInterrupt( ADXL345_INT_INACTIVITY_BIT, 1);
+  //end adxl
+
+    
+    
+   //GPS
+   LGPS.powerOn();
+  Serial.println("LGPS Power on, and waiting ..."); 
+  delay(3000);
+   //End GPS
     
   Serial.println("Connecting to AP");
   while (0 == LWiFi.connect(WIFI_AP, LWiFiLoginInfo(WIFI_AUTH, WIFI_PASSWORD)))
@@ -287,21 +348,105 @@ void uploadstatus(){
         Serial.print("humidity = ");
         Serial.println(h);
     }
-    
     delay(2000);
    //DHT end
-//t=int(t);
+   
+//GPS start
+  // put your main code here, to run repeatedly:
+  Serial.println("LGPS loop"); 
+  LGPS.getData(&info);
+  Serial.println((char*)info.GPGGA); 
+  parseGPGGA((const char*)info.GPGGA);
+  delay(2000);
+  //dataChnId,timestamp,{latitude},{longitude},{altitude}
+  
+//GPS End
+//adxl start 
+//Boring accelerometer stuff   
+  int x,y,z;  
+  adxl.readXYZ(&x, &y, &z); //read the accelerometer values and store them in variables  x,y,z
+  // Output x,y,z values 
+  Serial.print("values of X , Y , Z: ");
+  Serial.print(x);
+  Serial.print(" , ");
+  Serial.print(y);
+  Serial.print(" , ");
+  Serial.println(z);
+  
+  double xyz[3];
+  double ax,ay,az;
+  int activity=0;
+  adxl.getAcceleration(xyz);
+  ax = xyz[0];
+  ay = xyz[1];
+  az = xyz[2];
+  Serial.print("X=");
+  Serial.print(ax);
+    Serial.println(" g");
+  Serial.print("Y=");
+  Serial.print(ay);
+    Serial.println(" g");
+  Serial.print("Z=");
+  Serial.println(az);
+    Serial.println(" g");
+  Serial.println("**********************");
+  delay(500);
+  //Fun Stuff!    
+  //read interrupts source and look for triggerd actions
+  
+  //getInterruptSource clears all triggered actions after returning value
+  //so do not call again until you need to recheck for triggered actions
+   byte interrupts = adxl.getInterruptSource();
+  
+  // freefall
+  if(adxl.triggered(interrupts, ADXL345_FREE_FALL)){
+    Serial.println("freefall");
+    //add code here to do when freefall is sensed
+  } 
+  
+  
+  //activity
+  if(adxl.triggered(interrupts, ADXL345_ACTIVITY)){
+    Serial.println("activity"); 
+    activity=1;
+     //add code here to do when activity is sensed
+     
+  }
+  else
+  {
+    activity=0 ;
+  }
+  
+  //double tap
+  if(adxl.triggered(interrupts, ADXL345_DOUBLE_TAP)){
+    Serial.println("double tap");
+     //add code here to do when a 2X tap is sensed
+  }
+  
+  //tap
+  if(adxl.triggered(interrupts, ADXL345_SINGLE_TAP)){
+    Serial.println("tap");
+     //add code here to do when a tap is sensed
+  }
+  
+//adxl end
+
   upload_data = "";
   upload_data = "temp_id,,"+String(t);
   upload_data += "\nHumid_id,,"+String(h);
-  
-  
+  if(activity==1)
+  {
+    upload_data += "\nactivity_id,,"+String(activity);
+  }
+  else 
+  {
+    upload_data += "\nactivity_id,,"+String(activity);
+  }
+  //upload_data += "\ninactivity_id,,"+String(inactivity);
+  //upload_data += "\ngps_id,,41.40338,,2.17403";
   
   int thislength = upload_data.length();
 
-  
-
-  
   HttpClient http(c2);
   c2.print("POST /mcs/v2/devices/");
   c2.print(DEVICEID);
@@ -315,7 +460,7 @@ void uploadstatus(){
   c2.println("Content-Type: text/csv");
   c2.println("Connection: close");
   c2.println();
-  c2.println(upload_led);
+  c2.println(upload_data);
   
   delay(500);
 

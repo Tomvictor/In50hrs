@@ -117,5 +117,10 @@ void loop() {
   LGPS.getData(&info);
   Serial.println((char*)info.GPGGA); 
   parseGPGGA((const char*)info.GPGGA);
+  Serial.println("latitude");
+  Serial.println(latitude);
+  Serial.println("longitude");
+  Serial.println(latitude);
+  
   delay(2000);
 }
