@@ -20,6 +20,7 @@
 
 #define WIFI_AP "Indix-Event"
 #define WIFI_PASSWORD "guest@123"
+//use WPA for normal use
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
 #define SITE_URL "www.buildfromzero.com"
 
@@ -32,7 +33,7 @@ void setup()
 
   // keep retrying until connected to AP
   Serial.println("Connecting to AP");
-  while (0 == LWiFi.connect(WIFI_AP, LWiFiLoginInfo(WIFI_AUTH, WIFI_PASSWORD)))
+  while (0 == LWiFi.connect(WIFI_AP, LWiFiLoginInfo(WIFI_AUTH, WIFI_PASSWORD))) //
   {
     delay(1000);
   }
